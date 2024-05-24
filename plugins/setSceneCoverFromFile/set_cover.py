@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     )
 
 MANUAL_ROOT = None  # /some/other/path to override scanning all stashes
-cover_pattern = r"(?:thumb|poster|cover)\.(?:jpg|png)"
+cover_pattern = r"(?:poster|cover)\.(?:jpg|png|webp)"
 
 
 def main():

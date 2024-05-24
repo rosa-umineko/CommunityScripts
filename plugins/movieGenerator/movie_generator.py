@@ -111,7 +111,7 @@ def main():
 
 
 def get_movie_cover(root, movie):
-    pattern = r"(?:thumb|poster|cover)\.(?:jpg|png|webp)"
+    pattern = r"(?:poster|cover)\.(?:jpg|png|webp)"
     for local_root, dirs, files in os.walk(root):
         for file in files:
             if re.search(pattern, file):
@@ -180,7 +180,7 @@ def stash_create_movies(movies):
 
         if existing_id is None:
             new_movie = stash.create_movie(
-                movie_in={movie_in}
+                movie_in=movie_in
             )
             # log.info("New Movie: ")
             # log.info(new_movie)
