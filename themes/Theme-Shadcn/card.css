@@ -1,0 +1,28 @@
+.card .btn-primary,
+.card .btn-primary svg {
+	color: hsl(var(--primary)) !important;
+	background-color: hsl(var(--muted)) !important;
+}
+
+.card-popovers {
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  background: hsl(var(--card));
+  border: 0.05rem solid hsl(var(--border));
+  border-radius: 0.75rem;
+
+  box-shadow: none;
+}
+
+.TruncatedText {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  line-height: 1.57rem;
+}
+
+.TruncatedText:hover {
+  background-color: hsl(var(--muted));
+}

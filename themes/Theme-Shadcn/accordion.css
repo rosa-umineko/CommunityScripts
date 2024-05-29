@@ -1,0 +1,44 @@
+.filter-item-header {
+  background-color: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0.5rem;
+}
+
+.filter-item-header:active {
+  box-shadow: none;
+}
+
+.modifier-options .modifier-option {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5rem;
+  border-width: 1px;
+  border-color: transparent;
+  background-color: hsl(var(--secondary));
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  line-height: 1rem;
+  height: fit-content;
+  min-width: 2rem;
+  font-weight: 600;
+  color: hsl(var(--secondary-foreground));
+}
+
+.modifier-options .modifier-option.selected {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.tag-item {
+  color: hsl(var(--secondary-foreground));
+  background-color: hsl(var(--secondary));
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+}
+
+.tag-item .btn,
+.tag-item .btn:hover,
+.tag-item .btn:active,
+.tag-item .btn:focus {
+  background-color: transparent !important;
+}

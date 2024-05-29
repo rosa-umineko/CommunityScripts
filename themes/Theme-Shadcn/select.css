@@ -1,0 +1,34 @@
+.react-select__control {
+	background-color: hsl(var(--background)) !important;
+	border-color: hsl(var(--border)) !important;
+	color: hsl(var(--primary)) !important;
+
+  border-radius: 0.5rem !important;
+}
+
+.react-select__control:active,
+.react-select__control:focus {
+	box-shadow: none !important;
+}
+
+.react-select__menu,
+div.dropdown-menu {
+	background-color: hsl(var(--background)) !important;
+	border: 1px solid hsl(var(--border)) !important;
+	color: hsl(var(--primary)) !important;
+  scrollbar-gutter: stable both-edges;
+  padding-left: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+div.react-select__menu .react-select__option--is-focused,
+div.react-select__menu .dropdown-item:focus,
+div.react-select__menu .dropdown-item:hover,
+div.dropdown-menu .react-select__option--is-focused,
+div.dropdown-menu .dropdown-item:focus,
+div.dropdown-menu .dropdown-item:hover {
+	background-color: hsl(var(--muted)) !important;
+  border-radius: 0.5rem;
+	cursor: pointer;
+}
+

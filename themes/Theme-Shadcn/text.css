@@ -1,0 +1,33 @@
+h1 {
+  font-size: 3rem !important;
+	line-height: 1.1;
+	font-weight: 700;
+
+	vertical-align: top;
+
+	color: hsl(var(--foreground));
+}
+
+/* h2 {
+  margin: 0;
+  margin-top: 2.5rem;
+  scroll-margin: 5rem;
+  border-bottom-width: 1px;
+  padding-bottom: .5rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+} */
+
+h3 {
+  font-size: 1.5rem !important;
+  box-sizing: border-box;
+  border: 0 solid #e5e7eb;
+  border-color: hsl(var(--border));
+
+  scroll-margin: 5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
