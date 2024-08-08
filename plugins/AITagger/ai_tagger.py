@@ -111,7 +111,7 @@ async def tag_images():
         tasks = [__tag_images(batch) for batch in image_batches]
         await asyncio.gather(*tasks)
     else:
-        log.info("No images to tag")
+        log.info("No images to tag. Have you tagged any images with the AI_TagMe tag to get processed?")
 
 
 async def tag_scenes():
@@ -122,13 +122,20 @@ async def tag_scenes():
         tasks = [__tag_scene(scene) for scene in scenes]
         await asyncio.gather(*tasks)
     else:
-        log.info("No scenes to tag")
+        log.info("No scenes to tag. Have you tagged any scenes with the AI_TagMe tag to get processed?")
 
 # ----------------- Image Processing -----------------
 
 async def __tag_images(images):
     async with semaphore:
         imagePaths, imageIds, temp_files = media_handler.get_image_paths_and_ids(images)
+        mutated_image_paths = []
+        for path in imagePaths:
+            mutated_path = path
+            for key, value in config.path_mutation.items():
+                mutated_path = mutated_path.replace(key, value)
+            mutated_image_paths.append(mutated_path)
+        imagePaths = mutated_image_paths
         try:
             server_result = await ai_server.process_images_async(imagePaths)
             if server_result is None:
@@ -147,10 +154,10 @@ async def __tag_images(images):
                         log.error(f"Error processing image: {result['error']}")
                         media_handler.add_error_images([id])
                     else:
-                        actions = result['actions']
-                        action_stashtag_ids = media_handler.get_tag_ids(actions)
-                        action_stashtag_ids.append(media_handler.ai_tagged_tag_id)
-                        media_handler.add_tags_to_image(id, action_stashtag_ids)
+                        tags = media_handler.get_all_tags_from_server_result(result)
+                        stashtag_ids = media_handler.get_tag_ids(tags)
+                        stashtag_ids.append(media_handler.ai_tagged_tag_id)
+                        media_handler.add_tags_to_image(id, stashtag_ids)
 
             log.info(f"Tagged {len(imageIds)} images")
             media_handler.remove_tagme_tags_from_images(imageIds)
@@ -159,7 +166,7 @@ async def __tag_images(images):
         except asyncio.TimeoutError as a:
             log.error(f"Timeout processing images: {a}")
         except Exception as e:
-            log.error(f"Failed to process images: {e}")
+            log.error(f"Failed to process images: {e}Stack trace: {traceback.format_exc()}")
             media_handler.add_error_images(imageIds)
             media_handler.remove_tagme_tags_from_images(imageIds)
         finally:
@@ -175,6 +182,9 @@ async def __tag_images(images):
 async def __tag_scene(scene):
     async with semaphore:
         scenePath = scene['files'][0]['path']
+        mutated_path = scenePath
+        for key, value in config.path_mutation.items():
+            mutated_path = mutated_path.replace(key, value)
         sceneId = scene['id']
         log.debug("files result:" + str(scene['files'][0]))
         phash = scene['files'][0].get('fingerprint', None)
@@ -200,20 +210,40 @@ async def __tag_scene(scene):
                         log.error(f"Failed to load AI results from file: {e}")
                 elif os.path.exists(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__vid_giddy__1.0.csv")):
                     ai_video_result = AIVideoResult.from_csv_file(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__vid_giddy__1.0.csv"), scene_id=sceneId, phash=phash, duration=duration)
-                    log.info(f"Loading AI results from CSV file for scene {scenePath}: {ai_video_result}")
+                    log.info(f"Loading AI results from CSV file for scene {scenePath}")
                     current_pipeline_video = await ai_server.get_current_video_pipeline()
                     if ai_video_result.already_contains_model(current_pipeline_video):
-                            log.info(f"Skipping running AI for scene {scenePath} as it has already been processed with the same pipeline version and configuration. Updating tags and markers instead.")
-                            ai_video_result.to_json_file(ai_file_path)
-                            ai_video_result.update_stash_tags()
-                            ai_video_result.update_stash_markers()
-                            return
+                        log.info(f"Skipping running AI for scene {scenePath} as it has already been processed with the same pipeline version and configuration. Updating tags and markers instead.")
+                        ai_video_result.to_json_file(ai_file_path)
+                        ai_video_result.update_stash_tags()
+                        ai_video_result.update_stash_markers()
+                        return
+                elif os.path.exists(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__actiondetection__1.0.csv")):
+                    ai_video_result = AIVideoResult.from_csv_file(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__actiondetection__1.0.csv"), scene_id=sceneId, phash=phash, duration=duration, version=1.0)
+                    log.info(f"Loading AI results from CSV file for scene {scenePath}")
+                    current_pipeline_video = await ai_server.get_current_video_pipeline()
+                    if ai_video_result.already_contains_model(current_pipeline_video):
+                        log.info(f"Skipping running AI for scene {scenePath} as it has already been processed with the same pipeline version and configuration. Updating tags and markers instead.")
+                        ai_video_result.to_json_file(ai_file_path)
+                        ai_video_result.update_stash_tags()
+                        ai_video_result.update_stash_markers()
+                        return
+                elif os.path.exists(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__actiondetection__2.0.csv")):
+                    ai_video_result = AIVideoResult.from_csv_file(os.path.join(os.path.dirname(scenePath), os.path.splitext(os.path.basename(scenePath))[0] + f"__actiondetection__2.0.csv"), scene_id=sceneId, phash=phash, duration=duration, version=2.0)
+                    log.info(f"Loading AI results from CSV file for scene {scenePath}")
+                    current_pipeline_video = await ai_server.get_current_video_pipeline()
+                    if ai_video_result.already_contains_model(current_pipeline_video):
+                        log.info(f"Skipping running AI for scene {scenePath} as it has already been processed with the same pipeline version and configuration. Updating tags and markers instead.")
+                        ai_video_result.to_json_file(ai_file_path)
+                        ai_video_result.update_stash_tags()
+                        ai_video_result.update_stash_markers()
+                        return
                 else:
                     log.warning(f"Scene {scenePath} is already tagged but has no AI results file. Running AI again.")
             vr_video = media_handler.is_vr_scene(scene.get('tags'))
             if vr_video:
                 log.info(f"Processing VR video {scenePath}")
-            server_result = await ai_server.process_video_async(scenePath, vr_video)
+            server_result = await ai_server.process_video_async(mutated_path, vr_video)
             if server_result is None:
                 log.error("Server returned no results")
                 media_handler.add_error_scene(sceneId)
