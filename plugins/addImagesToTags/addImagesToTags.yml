@@ -1,0 +1,12 @@
+name: Add Images to Tags
+description: Auto add images to tags using first found image from Google API. Requires modifying the .py file to provide your own API key and CSE ID
+version: 1.0
+exec:
+  - python
+  - "{pluginDir}/addImagesToTags.py"
+interface: raw
+tasks:
+  - name: Add Images To Tags
+    description: Use google api to add images tags.
+    defaultArgs:
+      mode: trigger

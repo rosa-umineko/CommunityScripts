@@ -1,7 +1,0 @@
-/* CSS File containing what to hide */
-
-.donate,
-.navbar-nav button[title='Help'],
-.navbar-buttons button[title='Help'] {
-	display: none !important;
-}
