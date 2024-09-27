@@ -53,7 +53,7 @@ def handle_cover(path, file):
     log.info(f'Found Cover: {[int(s["id"]) for s in scenes]}|{filepath}')
 
     for scene in scenes:
-        if mode_arg == "set_cover":
+        if mode_arg == "set_cover" or mode_arg == "set_cover_recent":
             update_scene(scene, b64img)
         else:
             log.info(f"Applied cover to scene {scene['id']}")
@@ -99,7 +99,7 @@ def scan(ROOT_PATH, _callback):
                     filepath = os.path.join(root, file)
                     file_mtime = os.path.getmtime(filepath)
                     if file_mtime >= three_days_ago:
-                        log.info(f"File {file} is les than 3 days ago. Updating...")
+                        log.info(f"File {file} is less than 3 days ago. Updating...")
                         _callback(root, file)
 
 if __name__ == "__main__":
