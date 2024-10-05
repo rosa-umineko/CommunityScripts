@@ -1,5 +1,8 @@
 // Add to custom javascript
 
+const GRAPHQL_ENDPOINT = 'YOUR ENDPOINT HERE';
+const PRIMARY_TAG_ID = String("THE TAG ID TO ASSIGN TO O-COUNTER");
+
 function timestampToSeconds(timestamp) {
     const parts = timestamp.split(':').reverse();
     let seconds = 0;
@@ -18,7 +21,7 @@ async function createSceneMarker(sceneId, timestamp) {
             "scene_id": sceneId.toString(),
             "title": "",
             "seconds": seconds,
-            "primary_tag_id": "857"
+            "primary_tag_id": PRIMARY_TAG_ID
         },
         "query": `mutation SceneMarkerCreate($title: String!, $seconds: Float!, $scene_id: ID!, $primary_tag_id: ID!, $tag_ids: [ID!] = []) {
             sceneMarkerCreate(
@@ -29,7 +32,7 @@ async function createSceneMarker(sceneId, timestamp) {
         }`
     };
     
-    const response = await fetch('http://192.168.0.69:9999/graphql', {
+    const response = await fetch(GRAPHQL_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -49,7 +52,7 @@ async function createSceneMarker(sceneId, timestamp) {
     window.fetch = async function(...args) {
         const [resource, config] = args;
 
-        if (resource.includes('http://192.168.0.69:9999/graphql') && config && config.body) {
+        if (resource.includes(GRAPHQL_ENDPOINT) && config && config.body) {
             try {
                 const body = JSON.parse(config.body);
                 if (body.operationName === "SceneAddO") {
@@ -82,7 +85,7 @@ async function createSceneMarker(sceneId, timestamp) {
     };
 
     XMLHttpRequest.prototype.send = function(body) {
-        if (this._url.includes('http://192.168.0.69:9999/graphql') && body) {
+        if (this._url.includes(GRAPHQL_ENDPOINT) && body) {
             try {
                 const parsedBody = JSON.parse(body);
                 if (parsedBody.operationName === "SceneAddO") {
